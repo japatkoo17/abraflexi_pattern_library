@@ -1,0 +1,2315 @@
+{
+    "name": "Zahraničné FA prijaté (FEROVEucto app)",
+    "flow": [
+        {
+            "id": 44,
+            "module": "gateway:CustomWebHook",
+            "version": 1,
+            "parameters": {
+                "hook": 2418151,
+                "maxResults": 1
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 283,
+                    "y": 145
+                },
+                "restore": {
+                    "parameters": {
+                        "hook": {
+                            "data": {
+                                "editable": "true"
+                            },
+                            "label": "Zahraničné FA prijat. appka"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "hook",
+                        "type": "hook:gateway-webhook",
+                        "label": "Webhook",
+                        "required": true
+                    },
+                    {
+                        "name": "maxResults",
+                        "type": "number",
+                        "label": "Maximum number of results"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 45,
+            "module": "builtin:BasicRouter",
+            "version": 1,
+            "mapper": null,
+            "metadata": {
+                "designer": {
+                    "x": 668,
+                    "y": 144
+                }
+            },
+            "routes": [
+                {
+                    "flow": [
+                        {
+                            "id": 27,
+                            "module": "flexibee:NacistEvidenci",
+                            "version": 1,
+                            "parameters": {
+                                "__IMTCONN__": 2450822
+                            },
+                            "mapper": {
+                                "filtr": "duzpUcto >= {{44.`Dátum od`}} and duzpUcto <= {{44.`Dátum do`}} and clenKonVykDph = 4 and vatId not like \"SK\" and sumDphCelkem = 0",
+                                "limit": "0",
+                                "order": "duzpUcto",
+                                "detail": "full",
+                                "_evidence": "faktura-prijata",
+                                "_spolecnost": "{{44.ABRA_link}}"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 999,
+                                    "y": 141,
+                                    "name": "B.1. a IČ DPH != SK"
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "detail": {
+                                            "label": "Plný detail"
+                                        },
+                                        "_spolecnost": {
+                                            "mode": "edit"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "flexibee"
+                                            },
+                                            "label": "ABRA_API_FU"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:flexibee",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "_spolecnost",
+                                        "type": "select",
+                                        "label": "Společnost",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "detail",
+                                        "type": "select",
+                                        "label": "Detail",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "id",
+                                                "summary",
+                                                "full"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "filtr",
+                                        "type": "text",
+                                        "label": "Filtr"
+                                    },
+                                    {
+                                        "name": "order",
+                                        "type": "text",
+                                        "label": "Order"
+                                    },
+                                    {
+                                        "name": "limit",
+                                        "type": "uinteger",
+                                        "label": "Limit",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "_evidence",
+                                        "type": "any",
+                                        "label": "Evidence",
+                                        "required": true
+                                    }
+                                ],
+                                "interface": [
+                                    {
+                                        "name": "__IMTLENGTH__",
+                                        "type": "uinteger",
+                                        "label": "Total number of bundles"
+                                    },
+                                    {
+                                        "name": "__IMTINDEX__",
+                                        "type": "uinteger",
+                                        "label": "Bundle order position"
+                                    },
+                                    {
+                                        "name": "id",
+                                        "type": "integer",
+                                        "label": "ID",
+                                        "advanced": true,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "lastUpdate",
+                                        "type": "date",
+                                        "label": "Poslední změna",
+                                        "advanced": true,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "updatedBy",
+                                        "type": "select",
+                                        "label": "Upravil",
+                                        "options": "rpc://NacistPodevidenci?_evidence=uzivatel",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "createdBy",
+                                        "type": "select",
+                                        "label": "Vytvořil",
+                                        "options": "rpc://NacistPodevidenci?_evidence=uzivatel",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "createdDate",
+                                        "type": "date",
+                                        "label": "Datum vytvoření",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "kod",
+                                        "type": "text",
+                                        "label": "Interní číslo",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 20
+                                        }
+                                    },
+                                    {
+                                        "name": "zamekK",
+                                        "type": "select",
+                                        "label": "Zámek",
+                                        "options": [
+                                            {
+                                                "label": "Otevřeno",
+                                                "value": "zamek.otevreno"
+                                            },
+                                            {
+                                                "label": "Prohlédnuto",
+                                                "value": "zamek.prohlednuto"
+                                            },
+                                            {
+                                                "label": "Zamknuto mimo účetní",
+                                                "value": "zamek.polozamceno"
+                                            },
+                                            {
+                                                "label": "Zamknuto",
+                                                "value": "zamek.zamceno"
+                                            }
+                                        ],
+                                        "advanced": false,
+                                        "editable": true,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "cisDosle",
+                                        "type": "text",
+                                        "label": "Číslo došlé",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 40
+                                        }
+                                    },
+                                    {
+                                        "name": "varSym",
+                                        "type": "text",
+                                        "label": "Variabilní symbol",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 30
+                                        }
+                                    },
+                                    {
+                                        "name": "cisSml",
+                                        "type": "text",
+                                        "label": "Číslo smlouvy",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 30
+                                        }
+                                    },
+                                    {
+                                        "name": "cisObj",
+                                        "type": "text",
+                                        "label": "Číslo objednávky",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 2000
+                                        }
+                                    },
+                                    {
+                                        "name": "datObj",
+                                        "time": false,
+                                        "type": "date",
+                                        "label": "Objednáno",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "cisDodak",
+                                        "type": "text",
+                                        "label": "Dodací list",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 30
+                                        }
+                                    },
+                                    {
+                                        "name": "doprava",
+                                        "type": "text",
+                                        "label": "Doprava a vyskladnění",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "datVyst",
+                                        "time": false,
+                                        "type": "date",
+                                        "label": "Datum přijetí",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "duzpPuv",
+                                        "time": false,
+                                        "type": "date",
+                                        "label": "Datum zdaň. plnění",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "duzpUcto",
+                                        "time": false,
+                                        "type": "date",
+                                        "label": "Uplatnit zdaň. plnění",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "datSplat",
+                                        "time": false,
+                                        "type": "date",
+                                        "label": "Splatnost",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "datUhr",
+                                        "time": false,
+                                        "type": "date",
+                                        "label": "Datum úhrady",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "datTermin",
+                                        "time": false,
+                                        "type": "date",
+                                        "label": "Termín",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "datReal",
+                                        "time": false,
+                                        "type": "date",
+                                        "label": "Realizace",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "datSazbyDph",
+                                        "time": false,
+                                        "type": "date",
+                                        "label": "Datum sazeb DPH",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "popis",
+                                        "type": "text",
+                                        "label": "Popis",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 255
+                                        }
+                                    },
+                                    {
+                                        "name": "poznam",
+                                        "type": "text",
+                                        "label": "Poznámka",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumOsv",
+                                        "type": "number",
+                                        "label": "Osvob., bez DPH [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumZklSniz",
+                                        "type": "number",
+                                        "label": "Základ DPH sníž. [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumZklSniz2",
+                                        "type": "number",
+                                        "label": "Základ DPH 2. sníž. [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumZklZakl",
+                                        "type": "number",
+                                        "label": "Základ DPH zákl. [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumZklCelkem",
+                                        "type": "number",
+                                        "label": "Základ celkem [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumDphSniz",
+                                        "type": "number",
+                                        "label": "DPH snížená [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumDphSniz2",
+                                        "type": "number",
+                                        "label": "DPH 2. snížená [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumDphZakl",
+                                        "type": "number",
+                                        "label": "DPH základní [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumDphCelkem",
+                                        "type": "number",
+                                        "label": "DPH celkem [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumCelkSniz",
+                                        "type": "number",
+                                        "label": "Celkem vč. DPH - sníž. [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumCelkSniz2",
+                                        "type": "number",
+                                        "label": "Celkem vč. DPH - 2. sníž. [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumCelkZakl",
+                                        "type": "number",
+                                        "label": "Celkem vč. DPH - zákl. [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumCelkem",
+                                        "type": "number",
+                                        "label": "Celkem [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumOsvMen",
+                                        "type": "number",
+                                        "label": "Osvob., bez DPH [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumZklSnizMen",
+                                        "type": "number",
+                                        "label": "Základ DPH sníž. [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumZklSniz2Men",
+                                        "type": "number",
+                                        "label": "Základ DPH 2. sníž. [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumZklZaklMen",
+                                        "type": "number",
+                                        "label": "Základ DPH zákl. [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumZklCelkemMen",
+                                        "type": "number",
+                                        "label": "Základ celkem [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumDphZaklMen",
+                                        "type": "number",
+                                        "label": "DPH základní [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumDphSnizMen",
+                                        "type": "number",
+                                        "label": "DPH snížená [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumDphSniz2Men",
+                                        "type": "number",
+                                        "label": "DPH 2. snížená [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumDphCelkemMen",
+                                        "type": "number",
+                                        "label": "DPH celkem [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumCelkSnizMen",
+                                        "type": "number",
+                                        "label": "Celkem vč. DPH - sníž. [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumCelkSniz2Men",
+                                        "type": "number",
+                                        "label": "Celkem vč. DPH - 2. sníž. [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumCelkZaklMen",
+                                        "type": "number",
+                                        "label": "Celkem vč. DPH - zákl. [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumCelkemMen",
+                                        "type": "number",
+                                        "label": "Celkem [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "slevaDokl",
+                                        "type": "number",
+                                        "label": "Sleva [%]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "kurz",
+                                        "type": "number",
+                                        "label": "Kurz",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "kurzMnozstvi",
+                                        "type": "number",
+                                        "label": "Kurz. množství",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "stavUzivK",
+                                        "type": "select",
+                                        "label": "V příkazu ?",
+                                        "options": [
+                                            {
+                                                "label": "Bez příkazu",
+                                                "value": "stavUziv.bezPrikazu"
+                                            },
+                                            {
+                                                "label": "Obsažen v příkazu",
+                                                "value": "stavUziv.obsaPrikaz"
+                                            },
+                                            {
+                                                "label": "Odeslán částečný příkaz",
+                                                "value": "stavUziv.castPrikaz"
+                                            },
+                                            {
+                                                "label": "Odeslán příkaz",
+                                                "value": "stavUziv.celPrikaz"
+                                            },
+                                            {
+                                                "label": "Načteno elektronicky",
+                                                "value": "stavUziv.nactenoEl"
+                                            },
+                                            {
+                                                "label": "Naposledy načteno elektronicky",
+                                                "value": "stavUziv.nactenoElPosledni"
+                                            },
+                                            {
+                                                "label": "Vygenerován z kasy",
+                                                "value": "stavUziv.genKasa"
+                                            },
+                                            {
+                                                "label": "Zaúčtováno do pokladny",
+                                                "value": "stavUziv.zauctovano"
+                                            },
+                                            {
+                                                "label": "Změněno po zaúčtování",
+                                                "value": "stavUziv.zaucZmena"
+                                            }
+                                        ],
+                                        "advanced": false,
+                                        "editable": true,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "nazFirmy",
+                                        "type": "text",
+                                        "label": "Název firmy nebo jméno osoby",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 255
+                                        }
+                                    },
+                                    {
+                                        "name": "ulice",
+                                        "type": "text",
+                                        "label": "Ulice",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 255
+                                        }
+                                    },
+                                    {
+                                        "name": "mesto",
+                                        "type": "text",
+                                        "label": "Město",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 255
+                                        }
+                                    },
+                                    {
+                                        "name": "psc",
+                                        "type": "text",
+                                        "label": "PSČ",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 255
+                                        }
+                                    },
+                                    {
+                                        "name": "eanKod",
+                                        "type": "text",
+                                        "label": "EAN",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 20
+                                        }
+                                    },
+                                    {
+                                        "name": "ic",
+                                        "type": "text",
+                                        "label": "IČO",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 20
+                                        }
+                                    },
+                                    {
+                                        "name": "dic",
+                                        "type": "text",
+                                        "label": "DIČ",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 20
+                                        }
+                                    },
+                                    {
+                                        "name": "vatId",
+                                        "type": "text",
+                                        "label": "IČ DPH",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 20
+                                        }
+                                    },
+                                    {
+                                        "name": "pocetPriloh",
+                                        "type": "integer",
+                                        "label": "Přílohy",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "buc",
+                                        "type": "text",
+                                        "label": "Číslo bank. účtu",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 255
+                                        }
+                                    },
+                                    {
+                                        "name": "iban",
+                                        "type": "text",
+                                        "label": "IBAN",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 255
+                                        }
+                                    },
+                                    {
+                                        "name": "bic",
+                                        "type": "text",
+                                        "label": "BIC",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 255
+                                        }
+                                    },
+                                    {
+                                        "name": "specSym",
+                                        "type": "text",
+                                        "label": "Specifický symbol",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 255
+                                        }
+                                    },
+                                    {
+                                        "name": "bezPolozek",
+                                        "type": "boolean",
+                                        "label": "Bezpoložkový doklad",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "ucetni",
+                                        "type": "boolean",
+                                        "label": "Je účetní",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "szbDphSniz",
+                                        "type": "number",
+                                        "label": "Snížená sazba DPH",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "szbDphSniz2",
+                                        "type": "number",
+                                        "label": "2. snížená sazba DPH",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "szbDphZakl",
+                                        "type": "number",
+                                        "label": "Základní sazba DPH",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "uzpTuzemsko",
+                                        "type": "boolean",
+                                        "label": "Místo plnění tuzemsko",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "zuctovano",
+                                        "type": "boolean",
+                                        "label": "Zaúčtováno",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "datUcto",
+                                        "time": false,
+                                        "type": "date",
+                                        "label": "Datum zaúčtování",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "vyloucitSaldo",
+                                        "type": "boolean",
+                                        "label": "Vynechat ze salda",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "storno",
+                                        "type": "boolean",
+                                        "label": "Storno",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "stitky",
+                                        "type": "text",
+                                        "label": "Štítky",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "typDokl",
+                                        "type": "select",
+                                        "label": "Typ faktury",
+                                        "options": "rpc://NacistPodevidenci?_evidence=typ-faktury-prijate",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "mena",
+                                        "type": "select",
+                                        "label": "Měna",
+                                        "options": "rpc://NacistPodevidenci?_evidence=mena",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "konSym",
+                                        "type": "select",
+                                        "label": "Konst. sym.",
+                                        "options": "rpc://NacistPodevidenci?_evidence=konst-symbol",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "firma",
+                                        "type": "select",
+                                        "label": "Zkratka firmy",
+                                        "options": "rpc://NacistPodevidenci?_evidence=adresar",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "stat",
+                                        "type": "select",
+                                        "label": "Stát",
+                                        "options": "rpc://NacistPodevidenci?_evidence=stat",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "region",
+                                        "type": "select",
+                                        "label": "Kraj",
+                                        "options": "rpc://NacistPodevidenci?_evidence=region",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "banSpojDod",
+                                        "type": "select",
+                                        "label": "Účet dodavatele",
+                                        "options": "rpc://NacistPodevidenci?_evidence=adresar-bankovni-ucet",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "bankovniUcet",
+                                        "type": "select",
+                                        "label": "Bankovní účet",
+                                        "options": "rpc://NacistPodevidenci?_evidence=bankovni-ucet",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "typDoklSkl",
+                                        "type": "select",
+                                        "label": "Typ skladového dokladu",
+                                        "options": "rpc://NacistPodevidenci?_evidence=typ-skladovy-pohyb",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "typUcOp",
+                                        "type": "select",
+                                        "label": "Předpis zaúčtování",
+                                        "options": "rpc://NacistPodevidenci?_evidence=predpis-zauctovani",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "primUcet",
+                                        "type": "select",
+                                        "label": "Účet DAL",
+                                        "options": "rpc://NacistPodevidenci?_evidence=ucet",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "protiUcet",
+                                        "type": "select",
+                                        "label": "Účet MD",
+                                        "options": "rpc://NacistPodevidenci?_evidence=ucet",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "dphZaklUcet",
+                                        "type": "select",
+                                        "label": "Účet DPH základní sazba",
+                                        "options": "rpc://NacistPodevidenci?_evidence=ucet",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "dphSnizUcet",
+                                        "type": "select",
+                                        "label": "Účet DPH snížená sazba",
+                                        "options": "rpc://NacistPodevidenci?_evidence=ucet",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "dphSniz2Ucet",
+                                        "type": "select",
+                                        "label": "Účet DPH 2. snížená sazba",
+                                        "options": "rpc://NacistPodevidenci?_evidence=ucet",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "smerKod",
+                                        "type": "select",
+                                        "label": "Směr.kód",
+                                        "options": "rpc://NacistPodevidenci?_evidence=penezni-ustav",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "statDph",
+                                        "type": "select",
+                                        "label": "Stát DPH",
+                                        "options": "rpc://NacistPodevidenci?_evidence=stat-dph",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "clenDph",
+                                        "type": "select",
+                                        "label": "Řádky DPH",
+                                        "options": "rpc://NacistPodevidenci?_evidence=cleneni-dph",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "stredisko",
+                                        "type": "select",
+                                        "label": "Středisko",
+                                        "options": "rpc://NacistPodevidenci?_evidence=stredisko",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "cinnost",
+                                        "type": "select",
+                                        "label": "Činnost",
+                                        "options": "rpc://NacistPodevidenci?_evidence=cinnost",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "zakazka",
+                                        "type": "select",
+                                        "label": "Zakázka",
+                                        "options": "rpc://NacistPodevidenci?_evidence=zakazka",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "statOdesl",
+                                        "type": "select",
+                                        "label": "Stát odesl.",
+                                        "options": "rpc://NacistPodevidenci?_evidence=stat",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "statUrc",
+                                        "type": "select",
+                                        "label": "Stát určení",
+                                        "options": "rpc://NacistPodevidenci?_evidence=stat",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "statPuvod",
+                                        "type": "select",
+                                        "label": "Stát původu",
+                                        "options": "rpc://NacistPodevidenci?_evidence=stat",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "dodPodm",
+                                        "type": "select",
+                                        "label": "Podmínky dodání",
+                                        "options": "rpc://NacistPodevidenci?_evidence=intrastat-dodaci-podminky",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "obchTrans",
+                                        "type": "select",
+                                        "label": "Transakce",
+                                        "options": "rpc://NacistPodevidenci?_evidence=intrastat-obchodni-transakce",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "druhDopr",
+                                        "type": "select",
+                                        "label": "Druh dopravy",
+                                        "options": "rpc://NacistPodevidenci?_evidence=intrastat-druh-dopravy",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "zvlPoh",
+                                        "type": "select",
+                                        "label": "Zvláštní pohyby",
+                                        "options": "rpc://NacistPodevidenci?_evidence=intrastat-zvlastni-pohyb",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "krajUrc",
+                                        "type": "select",
+                                        "label": "Kraj určení",
+                                        "options": "rpc://NacistPodevidenci?_evidence=intrastat-kraj-urceni",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "uzivatel",
+                                        "type": "select",
+                                        "label": "Uživatel",
+                                        "options": "rpc://NacistPodevidenci?_evidence=uzivatel",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "zodpOsoba",
+                                        "type": "select",
+                                        "label": "Zodpovědná osoba",
+                                        "options": "rpc://NacistPodevidenci?_evidence=uzivatel",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "kontaktOsoba",
+                                        "type": "select",
+                                        "label": "Kontaktní osoba",
+                                        "options": "rpc://NacistPodevidenci?_evidence=kontakt",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "kontaktJmeno",
+                                        "type": "text",
+                                        "label": "Kontaktní jméno",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 255
+                                        }
+                                    },
+                                    {
+                                        "name": "kontaktEmail",
+                                        "type": "text",
+                                        "label": "Kontaktní e-mail",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 255
+                                        }
+                                    },
+                                    {
+                                        "name": "kontaktTel",
+                                        "type": "text",
+                                        "label": "Kontaktní telefon",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 255
+                                        }
+                                    },
+                                    {
+                                        "name": "rada",
+                                        "type": "select",
+                                        "label": "Čís. řada",
+                                        "options": "rpc://NacistPodevidenci?_evidence=rada-faktury-prijate",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sazbaDphOsv",
+                                        "type": "select",
+                                        "label": "Osvobozená sazba DPH",
+                                        "options": "rpc://NacistPodevidenci?_evidence=sazba-dph",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sazbaDphSniz",
+                                        "type": "select",
+                                        "label": "Snížená sazba DPH",
+                                        "options": "rpc://NacistPodevidenci?_evidence=sazba-dph",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sazbaDphSniz2",
+                                        "type": "select",
+                                        "label": "2. snížená sazba DPH",
+                                        "options": "rpc://NacistPodevidenci?_evidence=sazba-dph",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sazbaDphZakl",
+                                        "type": "select",
+                                        "label": "Základní sazba DPH",
+                                        "options": "rpc://NacistPodevidenci?_evidence=sazba-dph",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "smlouva",
+                                        "type": "select",
+                                        "label": "Smlouva",
+                                        "options": "rpc://NacistPodevidenci?_evidence=dodavatelska-smlouva",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "formaDopravy",
+                                        "type": "select",
+                                        "label": "Forma dopravy",
+                                        "options": "rpc://NacistPodevidenci?_evidence=forma-dopravy",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "uuid",
+                                        "type": "text",
+                                        "label": "Uuid",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 50
+                                        }
+                                    },
+                                    {
+                                        "name": "source",
+                                        "type": "text",
+                                        "label": "Zdroj",
+                                        "advanced": false,
+                                        "required": false,
+                                        "validate": {
+                                            "max": 50
+                                        }
+                                    },
+                                    {
+                                        "name": "ekokomK",
+                                        "type": "select",
+                                        "label": "Výkaz EkoKom",
+                                        "options": [
+                                            {
+                                                "label": "Zpoplatněné obaly",
+                                                "value": "ekokom.zpoplatneneObaly"
+                                            },
+                                            {
+                                                "label": "Předplacené obaly",
+                                                "value": "ekokom.predplaceneObaly"
+                                            },
+                                            {
+                                                "label": "Nezaplacené obaly",
+                                                "value": "ekokom.nezaplaceneObaly"
+                                            },
+                                            {
+                                                "label": "Exportované obaly",
+                                                "value": "ekokom.exportovaneObaly"
+                                            },
+                                            {
+                                                "label": "Vyřazené obaly",
+                                                "value": "ekokom.vyrazeneObaly"
+                                            }
+                                        ],
+                                        "advanced": false,
+                                        "editable": true,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "dodatNa",
+                                        "type": "select",
+                                        "label": "Dodat na adresu",
+                                        "options": "rpc://NacistPodevidenci?_evidence=adresar",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "clenKonVykDph",
+                                        "type": "select",
+                                        "label": "Řádek kontrolního hlášení DPH",
+                                        "options": "rpc://NacistPodevidenci?_evidence=cleneni-kontrolni-hlaseni",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "datUp1",
+                                        "time": false,
+                                        "type": "date",
+                                        "label": "Datum upomínky 1",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "datUp2",
+                                        "time": false,
+                                        "type": "date",
+                                        "label": "Datum upomínky 2",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "datSmir",
+                                        "time": false,
+                                        "type": "date",
+                                        "label": "Datum smíru",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "datPenale",
+                                        "time": false,
+                                        "type": "date",
+                                        "label": "Datum penalizace",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "podpisPrik",
+                                        "type": "boolean",
+                                        "label": "Podpis příkazu",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "prikazSum",
+                                        "type": "number",
+                                        "label": "Příkazy [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "prikazSumMen",
+                                        "type": "number",
+                                        "label": "Příkazy [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "juhSum",
+                                        "type": "number",
+                                        "label": "Již uhrazeno [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "juhSumMen",
+                                        "type": "number",
+                                        "label": "Již uhrazeno [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "juhDat",
+                                        "type": "number",
+                                        "label": "Uhr. k datu [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "juhDatMen",
+                                        "type": "number",
+                                        "label": "Uhr. k datu [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "zbyvaUhradit",
+                                        "type": "number",
+                                        "label": "Zbývá uhradit [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "zbyvaUhraditMen",
+                                        "type": "number",
+                                        "label": "Zbývá uhradit [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "formaUhradyCis",
+                                        "type": "select",
+                                        "label": "Forma úhrady",
+                                        "options": "rpc://NacistPodevidenci?_evidence=forma-uhrady",
+                                        "advanced": false,
+                                        "editable": {
+                                            "help": "Zadejte ID.",
+                                            "enabled": true
+                                        },
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "stavUhrK",
+                                        "type": "select",
+                                        "label": "Stav úhrady dokladu",
+                                        "options": [
+                                            {
+                                                "label": "Částečně uhrazeno",
+                                                "value": "stavUhr.castUhr"
+                                            },
+                                            {
+                                                "label": "Uhrazeno",
+                                                "value": "stavUhr.uhrazeno"
+                                            },
+                                            {
+                                                "label": "Uhrazeno (ručně)",
+                                                "value": "stavUhr.uhrazenoRucne"
+                                            }
+                                        ],
+                                        "advanced": false,
+                                        "editable": true,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "juhSumPp",
+                                        "type": "number",
+                                        "label": "Již uhrazeno přeplatky [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "juhSumPpMen",
+                                        "type": "number",
+                                        "label": "Již uhrazeno přeplatky [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumPrepl",
+                                        "type": "number",
+                                        "label": "Přeplaceno [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumPreplMen",
+                                        "type": "number",
+                                        "label": "Přeplaceno [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumZalohy",
+                                        "type": "number",
+                                        "label": "Zálohy",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumZalohyMen",
+                                        "type": "number",
+                                        "label": "Zálohy [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "stavOdpocetK",
+                                        "type": "select",
+                                        "label": "Odpočet zál.",
+                                        "options": [
+                                            {
+                                                "label": "Částečně odpočteno",
+                                                "value": "stavOdp.cast"
+                                            },
+                                            {
+                                                "label": "Odpočteno",
+                                                "value": "stavOdp.komplet"
+                                            },
+                                            {
+                                                "label": "Vytvořen ZDD",
+                                                "value": "stavOdp.vytvZdd"
+                                            }
+                                        ],
+                                        "advanced": false,
+                                        "editable": true,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "generovatSkl",
+                                        "type": "boolean",
+                                        "label": "Generovat sklad. doklady",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "hromFakt",
+                                        "type": "boolean",
+                                        "label": "Hrom. fakturace",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "zdrojProSkl",
+                                        "type": "boolean",
+                                        "label": "Zdroj pro sklad. doklady",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "zakazPlatba",
+                                        "type": "boolean",
+                                        "label": "Zákaz proplacení",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "dobropisovano",
+                                        "type": "boolean",
+                                        "label": "Dobropisováno",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumCelkemBezZaloh",
+                                        "type": "number",
+                                        "label": "Celkem bez záloh [€]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "sumCelkemBezZalohMen",
+                                        "type": "number",
+                                        "label": "Celkem bez záloh [měna]",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "osobUpravaDph",
+                                        "type": "boolean",
+                                        "label": "Zvláštní režim DPH",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "osobUpravaDphDodavatel",
+                                        "type": "boolean",
+                                        "label": "Dodavatel ve zvláštním režimu DPH",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "eetFik",
+                                        "type": "text",
+                                        "label": "FIK",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "eetBkp",
+                                        "type": "text",
+                                        "label": "BKP",
+                                        "advanced": false,
+                                        "required": false
+                                    },
+                                    {
+                                        "name": "eetStavK",
+                                        "type": "select",
+                                        "label": "Stav odeslání",
+                                        "options": [
+                                            {
+                                                "label": "neodesláno",
+                                                "value": "eetStav.ne"
+                                            },
+                                            {
+                                                "label": "neúspěch",
+                                                "value": "eetStav.neuspech"
+                                            },
+                                            {
+                                                "label": "odesláno",
+                                                "value": "eetStav.odeslano"
+                                            },
+                                            {
+                                                "label": "neodesláno storno",
+                                                "value": "eetStav.neStorno"
+                                            },
+                                            {
+                                                "label": "neúspěch storno",
+                                                "value": "eetStav.neuspechStorno"
+                                            },
+                                            {
+                                                "label": "odesláno storno",
+                                                "value": "eetStav.odeslanoStorno"
+                                            }
+                                        ],
+                                        "advanced": false,
+                                        "editable": true,
+                                        "required": false
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 47,
+                            "module": "builtin:BasicRouter",
+                            "version": 1,
+                            "mapper": null,
+                            "metadata": {
+                                "designer": {
+                                    "x": 1360,
+                                    "y": 149
+                                }
+                            },
+                            "routes": [
+                                {
+                                    "flow": [
+                                        {
+                                            "id": 48,
+                                            "module": "util:SetVariable2",
+                                            "version": 1,
+                                            "parameters": {},
+                                            "filter": {
+                                                "name": "Len prvý bundle",
+                                                "conditions": [
+                                                    [
+                                                        {
+                                                            "a": "{{27.`__IMTINDEX__`}}",
+                                                            "b": "1",
+                                                            "o": "number:lessorequal"
+                                                        }
+                                                    ]
+                                                ]
+                                            },
+                                            "mapper": {
+                                                "name": "prijate-faktury",
+                                                "scope": "roundtrip",
+                                                "value": "{{27.`__IMTLENGTH__`}}"
+                                            },
+                                            "metadata": {
+                                                "designer": {
+                                                    "x": 1566,
+                                                    "y": -136,
+                                                    "name": "Total num. of bundles"
+                                                },
+                                                "restore": {
+                                                    "expect": {
+                                                        "scope": {
+                                                            "label": "One cycle"
+                                                        }
+                                                    }
+                                                },
+                                                "expect": [
+                                                    {
+                                                        "name": "name",
+                                                        "type": "text",
+                                                        "label": "Variable name",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "scope",
+                                                        "type": "select",
+                                                        "label": "Variable lifetime",
+                                                        "required": true,
+                                                        "validate": {
+                                                            "enum": [
+                                                                "roundtrip",
+                                                                "execution"
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "value",
+                                                        "type": "any",
+                                                        "label": "Variable value"
+                                                    }
+                                                ],
+                                                "interface": [
+                                                    {
+                                                        "name": "prijate-faktury",
+                                                        "type": "any",
+                                                        "label": "prijate-faktury"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "flow": [
+                                        {
+                                            "id": 41,
+                                            "module": "flexibee:MakeAPICall",
+                                            "version": 1,
+                                            "parameters": {
+                                                "__IMTCONN__": 2450822
+                                            },
+                                            "filter": {
+                                                "name": "",
+                                                "conditions": [
+                                                    [
+                                                        {
+                                                            "a": "{{27.`__IMTLENGTH__`}}",
+                                                            "b": "0",
+                                                            "o": "number:greater"
+                                                        }
+                                                    ]
+                                                ]
+                                            },
+                                            "mapper": {
+                                                "qs": [],
+                                                "url": "/faktura-prijata/{{27.id}}.json",
+                                                "body": "{\r\n  \"winstrom\": {\r\n    \"faktura-prijata\": {\r\n\r\n      \"sumOsv\": \"0\",\r\n      \"sumZklZakl\": \"{{27.sumCelkem}}\", \r\n      \"sumDphSniz\": \"0\",\r\n      \"sumDphSniz2\": \"0\",\r\n      \"sumZklSniz\": \"0\",\n      \"sumZklSniz2\": \"0\"\n    \r\n    }\r\n  }\r\n}",
+                                                "method": "PUT",
+                                                "headers": [
+                                                    {
+                                                        "key": "Content-Type",
+                                                        "value": "application/json"
+                                                    }
+                                                ],
+                                                "_spolecnost": "{{44.ABRA_link}}"
+                                            },
+                                            "metadata": {
+                                                "designer": {
+                                                    "x": 1715,
+                                                    "y": 150,
+                                                    "name": "Prepočítaj Faktúru"
+                                                },
+                                                "restore": {
+                                                    "expect": {
+                                                        "method": {
+                                                            "label": "PUT"
+                                                        },
+                                                        "headers": {
+                                                            "items": [
+                                                                null
+                                                            ]
+                                                        },
+                                                        "_spolecnost": {
+                                                            "mode": "edit",
+                                                            "nested": [
+                                                                {
+                                                                    "help": "Enter a path relative to `https://feroveucto0.flexibee.eu/c/`. For example: `/smlouva`.",
+                                                                    "name": "url",
+                                                                    "type": "text",
+                                                                    "label": "URL",
+                                                                    "required": true
+                                                                }
+                                                            ]
+                                                        }
+                                                    },
+                                                    "parameters": {
+                                                        "__IMTCONN__": {
+                                                            "data": {
+                                                                "scoped": "true",
+                                                                "connection": "flexibee"
+                                                            },
+                                                            "label": "ABRA_API_FU"
+                                                        }
+                                                    }
+                                                },
+                                                "parameters": [
+                                                    {
+                                                        "name": "__IMTCONN__",
+                                                        "type": "account:flexibee",
+                                                        "label": "Connection",
+                                                        "required": true
+                                                    }
+                                                ],
+                                                "expect": [
+                                                    {
+                                                        "name": "_spolecnost",
+                                                        "type": "select",
+                                                        "label": "Společnost",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "method",
+                                                        "type": "select",
+                                                        "label": "Method",
+                                                        "required": true,
+                                                        "validate": {
+                                                            "enum": [
+                                                                "GET",
+                                                                "POST",
+                                                                "PUT",
+                                                                "PATCH",
+                                                                "DELETE"
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "headers",
+                                                        "spec": [
+                                                            {
+                                                                "name": "key",
+                                                                "type": "text",
+                                                                "label": "Key"
+                                                            },
+                                                            {
+                                                                "name": "value",
+                                                                "type": "text",
+                                                                "label": "Value"
+                                                            }
+                                                        ],
+                                                        "type": "array",
+                                                        "label": "Headers"
+                                                    },
+                                                    {
+                                                        "name": "qs",
+                                                        "spec": [
+                                                            {
+                                                                "name": "key",
+                                                                "type": "text",
+                                                                "label": "Key"
+                                                            },
+                                                            {
+                                                                "name": "value",
+                                                                "type": "text",
+                                                                "label": "Value"
+                                                            }
+                                                        ],
+                                                        "type": "array",
+                                                        "label": "Query String"
+                                                    },
+                                                    {
+                                                        "name": "body",
+                                                        "type": "any",
+                                                        "label": "Body"
+                                                    },
+                                                    {
+                                                        "name": "url",
+                                                        "type": "text",
+                                                        "label": "URL",
+                                                        "required": true
+                                                    }
+                                                ]
+                                            },
+                                            "onerror": [
+                                                {
+                                                    "id": 50,
+                                                    "module": "appsheet:createRecord",
+                                                    "version": 1,
+                                                    "parameters": {
+                                                        "__IMTCONN__": 4941183
+                                                    },
+                                                    "filter": {
+                                                        "name": "NESPRACOVANE",
+                                                        "conditions": []
+                                                    },
+                                                    "mapper": {
+                                                        "Record": [
+                                                            {
+                                                                "name": "firma",
+                                                                "value": "{{44.ABRA_link}}"
+                                                            },
+                                                            {
+                                                                "name": "evidencia",
+                                                                "value": "faktura-prijata"
+                                                            },
+                                                            {
+                                                                "name": "abralink",
+                                                                "value": "https://feroveucto0.flexibee.eu/flexi/{{44.ABRA_link}}/faktura-prijata/{{27.id}}/edit"
+                                                            },
+                                                            {
+                                                                "name": "popis",
+                                                                "value": "{{27.popis}}"
+                                                            },
+                                                            {
+                                                                "name": "Dátum zdaniteľného plnenia",
+                                                                "value": "{{27.duzpPuv}}"
+                                                            },
+                                                            {
+                                                                "name": "Názov scenára",
+                                                                "value": "Automat REPRE (FEROVEucto app)"
+                                                            },
+                                                            {
+                                                                "name": "ID_spustenia",
+                                                                "value": "{{44.ID_spustenie}}"
+                                                            },
+                                                            {
+                                                                "name": "ID_chybný doklad",
+                                                                "value": "{{27.id}}"
+                                                            }
+                                                        ],
+                                                        "tableName": "chybné doklady"
+                                                    },
+                                                    "metadata": {
+                                                        "designer": {
+                                                            "x": 1984,
+                                                            "y": -113,
+                                                            "name": "chybné doklady"
+                                                        },
+                                                        "restore": {
+                                                            "expect": {
+                                                                "Record": {
+                                                                    "mode": "chose",
+                                                                    "items": [
+                                                                        null,
+                                                                        null,
+                                                                        null,
+                                                                        null,
+                                                                        null,
+                                                                        null,
+                                                                        null,
+                                                                        null
+                                                                    ]
+                                                                },
+                                                                "UserSettings": {
+                                                                    "mode": "chose"
+                                                                }
+                                                            },
+                                                            "parameters": {
+                                                                "__IMTCONN__": {
+                                                                    "data": {
+                                                                        "scoped": "true",
+                                                                        "connection": "appsheet"
+                                                                    },
+                                                                    "label": "FEROVEucto appka klienti"
+                                                                }
+                                                            }
+                                                        },
+                                                        "parameters": [
+                                                            {
+                                                                "name": "__IMTCONN__",
+                                                                "type": "account:appsheet",
+                                                                "label": "Connection",
+                                                                "required": true
+                                                            }
+                                                        ],
+                                                        "expect": [
+                                                            {
+                                                                "name": "tableName",
+                                                                "type": "text",
+                                                                "label": "Table Name",
+                                                                "required": true
+                                                            },
+                                                            {
+                                                                "name": "Record",
+                                                                "spec": {
+                                                                    "name": "value",
+                                                                    "spec": [
+                                                                        {
+                                                                            "name": "name",
+                                                                            "type": "text",
+                                                                            "label": "Key"
+                                                                        },
+                                                                        {
+                                                                            "name": "value",
+                                                                            "type": "text",
+                                                                            "label": "Value"
+                                                                        }
+                                                                    ],
+                                                                    "type": "collection"
+                                                                },
+                                                                "type": "array",
+                                                                "required": true
+                                                            },
+                                                            {
+                                                                "name": "RunAsUserEmail",
+                                                                "type": "email",
+                                                                "label": "Run as User Email"
+                                                            },
+                                                            {
+                                                                "name": "UserSettings",
+                                                                "spec": {
+                                                                    "name": "value",
+                                                                    "spec": [
+                                                                        {
+                                                                            "name": "name",
+                                                                            "type": "text",
+                                                                            "label": "Setting Option Name"
+                                                                        },
+                                                                        {
+                                                                            "name": "value",
+                                                                            "type": "text",
+                                                                            "label": "Setting Option Value"
+                                                                        }
+                                                                    ],
+                                                                    "type": "collection"
+                                                                },
+                                                                "type": "array",
+                                                                "label": "User Settings"
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                {
+                                                    "id": 43,
+                                                    "module": "builtin:Ignore",
+                                                    "version": 1,
+                                                    "metadata": {
+                                                        "designer": {
+                                                            "x": 2324,
+                                                            "y": -107
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "flow": [
+                        {
+                            "id": 49,
+                            "module": "util:GetVariable2",
+                            "version": 1,
+                            "parameters": {},
+                            "mapper": {
+                                "name": "prijate-faktury"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 932,
+                                    "y": 586
+                                },
+                                "restore": {},
+                                "expect": [
+                                    {
+                                        "name": "name",
+                                        "type": "text",
+                                        "label": "Variable name",
+                                        "required": true
+                                    }
+                                ],
+                                "interface": [
+                                    {
+                                        "name": "prijate-faktury",
+                                        "type": "any",
+                                        "label": "prijate-faktury"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 46,
+                            "module": "appsheet:editRecord",
+                            "version": 1,
+                            "parameters": {
+                                "__IMTCONN__": 4941183
+                            },
+                            "mapper": {
+                                "Record": [
+                                    {
+                                        "name": "ID_spustenie",
+                                        "value": "{{44.ID_spustenie}}"
+                                    },
+                                    {
+                                        "name": "uspech",
+                                        "value": "TRUE"
+                                    },
+                                    {
+                                        "name": "počet dokladov",
+                                        "value": "{{49.`prijate-faktury`}}"
+                                    },
+                                    {
+                                        "name": "credits",
+                                        "value": "{{var.scenario.creditsConsumed + 1}}"
+                                    },
+                                    {
+                                        "name": "data",
+                                        "value": "{{var.scenario.dataConsumed + 350}}"
+                                    },
+                                    {
+                                        "name": "execution_id",
+                                        "value": "{{var.scenario.executionId}}"
+                                    }
+                                ],
+                                "tableName": "spustenia"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1238,
+                                    "y": 577,
+                                    "name": "USPECH"
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "Record": {
+                                            "mode": "chose",
+                                            "items": [
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null
+                                            ]
+                                        },
+                                        "UserSettings": {
+                                            "mode": "chose"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "appsheet"
+                                            },
+                                            "label": "FEROVEucto appka klienti"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:appsheet",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "tableName",
+                                        "type": "text",
+                                        "label": "Table Name",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "Record",
+                                        "spec": {
+                                            "name": "value",
+                                            "spec": [
+                                                {
+                                                    "name": "name",
+                                                    "type": "text",
+                                                    "label": "Key"
+                                                },
+                                                {
+                                                    "name": "value",
+                                                    "type": "text",
+                                                    "label": "Value"
+                                                }
+                                            ],
+                                            "type": "collection"
+                                        },
+                                        "type": "array",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "RunAsUserEmail",
+                                        "type": "email",
+                                        "label": "Run as User Email"
+                                    },
+                                    {
+                                        "name": "UserSettings",
+                                        "spec": {
+                                            "name": "value",
+                                            "spec": [
+                                                {
+                                                    "name": "name",
+                                                    "type": "text",
+                                                    "label": "Setting Option Name"
+                                                },
+                                                {
+                                                    "name": "value",
+                                                    "type": "text",
+                                                    "label": "Setting Option Value"
+                                                }
+                                            ],
+                                            "type": "collection"
+                                        },
+                                        "type": "array",
+                                        "label": "User Settings"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "instant": true,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu1.make.com",
+        "notes": []
+    }
+}

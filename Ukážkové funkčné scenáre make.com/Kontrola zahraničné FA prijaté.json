@@ -1,0 +1,788 @@
+{
+    "name": "Kontrola Zahraničné FA prijaté (APPKA)",
+    "flow": [
+        {
+            "id": 8,
+            "module": "gateway:CustomWebHook",
+            "version": 1,
+            "parameters": {
+                "hook": 2412331,
+                "maxResults": 1
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": -487,
+                    "y": -535
+                },
+                "restore": {
+                    "parameters": {
+                        "hook": {
+                            "data": {
+                                "editable": "true"
+                            },
+                            "label": "APPKA zah FA"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "hook",
+                        "type": "hook:gateway-webhook",
+                        "label": "Webhook",
+                        "required": true
+                    },
+                    {
+                        "name": "maxResults",
+                        "type": "number",
+                        "label": "Maximum number of results"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "ID_spustenie",
+                        "type": "text"
+                    },
+                    {
+                        "name": "_RowNumber",
+                        "type": "text"
+                    },
+                    {
+                        "name": "obchodné meno",
+                        "type": "text"
+                    },
+                    {
+                        "name": "ABRA_link",
+                        "type": "text"
+                    },
+                    {
+                        "name": "IČO",
+                        "type": "text"
+                    },
+                    {
+                        "name": "DIČ",
+                        "type": "text"
+                    },
+                    {
+                        "name": "IČ DPH",
+                        "type": "text"
+                    },
+                    {
+                        "name": "Connection",
+                        "type": "text"
+                    },
+                    {
+                        "name": "Dátum od",
+                        "type": "text"
+                    },
+                    {
+                        "name": "Dátum do",
+                        "type": "text"
+                    }
+                ],
+                "advanced": true
+            }
+        },
+        {
+            "id": 4,
+            "module": "flexibee:MakeAPICall",
+            "version": 1,
+            "parameters": {
+                "__IMTCONN__": 2450822
+            },
+            "mapper": {
+                "qs": [],
+                "url": "/faktura-prijata/query.json",
+                "body": "{\r\n  \"winstrom\": {\r\n    \"filter\": \"clenKonVykDph = 4 and vatId not like \\\"SK\\\" and duzpUcto >= {{8.`Dátum od`}} and duzpUcto <= {{8.`Dátum do`}} and typDokl != 'code:ZÁLOHA'\",\r\n    \"limit\": \"0\",\r\n    \"@version\": \"1.0\"\r\n  }\r\n}",
+                "method": "POST",
+                "headers": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "_spolecnost": "{{8.ABRA_link}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": -115,
+                    "y": -537,
+                    "name": "FA prijata"
+                },
+                "restore": {
+                    "expect": {
+                        "method": {
+                            "label": "POST"
+                        },
+                        "headers": {
+                            "items": [
+                                null
+                            ]
+                        },
+                        "_spolecnost": {
+                            "mode": "edit",
+                            "nested": [
+                                {
+                                    "help": "Enter a path relative to `https://feroveucto0.flexibee.eu/c/stepanek3d__s_r_o_`. For example: `/smlouva`.",
+                                    "name": "url",
+                                    "type": "text",
+                                    "label": "URL",
+                                    "required": true
+                                }
+                            ]
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "flexibee"
+                            },
+                            "label": "ABRA_API_FU"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:flexibee",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "_spolecnost",
+                        "type": "select",
+                        "label": "Společnost",
+                        "required": true
+                    },
+                    {
+                        "name": "method",
+                        "type": "select",
+                        "label": "Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "GET",
+                                "POST",
+                                "PUT",
+                                "PATCH",
+                                "DELETE"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "headers",
+                        "spec": [
+                            {
+                                "name": "key",
+                                "type": "text",
+                                "label": "Key"
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Headers"
+                    },
+                    {
+                        "name": "qs",
+                        "spec": [
+                            {
+                                "name": "key",
+                                "type": "text",
+                                "label": "Key"
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Query String"
+                    },
+                    {
+                        "name": "body",
+                        "type": "any",
+                        "label": "Body"
+                    },
+                    {
+                        "name": "url",
+                        "type": "text",
+                        "label": "URL",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 6,
+            "module": "code:ExecuteCode",
+            "version": 0,
+            "parameters": {},
+            "mapper": {
+                "input": [
+                    {
+                        "name": "FA_prijata",
+                        "value": "{{4.body.winstrom.`faktura-prijata`}}"
+                    },
+                    {
+                        "name": "abra_firma",
+                        "value": "{{8.ABRA_link}}"
+                    },
+                    {
+                        "name": "ID_spustenia",
+                        "value": "{{8.ID_spustenie}}"
+                    }
+                ],
+                "language": "javascript",
+                "inputFormat": "editor",
+                "dependencies": [],
+                "codeEditorJavascript": "// --- Začiatok kódu pre Make.com (iba FA_prijata) ---\n\n// Načítanie potrebných premenných zo vstupu\n// Ostatné (FA_vystavena, banka, atď.) sa ignorujú\nconst {\n  FA_prijata,\n  abra_firma,\n  ID_spustenia\n} = input;\n\n// Validácia, či máme k dispozícii názov firmy pre URL\nif (!abra_firma) {\n  throw new Error(\"Chýba vstupná premenná 'abra_firma'!\");\n}\n\n// Základná časť URL adresy\nconst baseUrl = `https://feroveucto0.flexibee.eu/flexi/${abra_firma}`;\n\n// --- Príprava Dátumu a Času ---\n// 1. Získame aktuálny dátum\nconst now = new Date();\n\n// 2. Nastavíme požadované formátovanie a časovú zónu\nconst options = {\n  timeZone: 'Europe/Prague',\n  day: '2-digit',\n  month: '2-digit',\n  year: 'numeric',\n  hour: '2-digit',\n  minute: '2-digit',\n  hour12: false\n};\n\n// 3. Použijeme Intl.DateTimeFormat na získanie jednotlivých častí\nconst parts = new Intl.DateTimeFormat('sk-SK', options).formatToParts(now);\n\n// 4. Prevedieme pole častí na jednoduchý objekt (mapu)\nconst partMap = {};\nparts.forEach(part => {\n  if (part.type !== 'literal') {\n    partMap[part.type] = part.value;\n  }\n});\n\n// 5. Zložíme finálny string vo formáte DD-MM-YYYY HH:mm\nconst aktualnyDatetime = `${partMap.day}-${partMap.month}-${partMap.year} ${partMap.hour}:${partMap.minute}`;\n\n// --- Spracovanie ---\n\n// Toto bude hlavné pole, ktoré vrátime.\nconst vystupneKolekcie = [];\n\n/*\n * Pomocná funkcia, ktorá prejde vstupné pole\n * a pre každú položku pridá nový OBJEKT do poľa 'vystupneKolekcie'.\n */\nconst spracujPole = (arr, evidencia) => {\n  // Bezpečná iterácia (arr || [])\n  (arr || []).forEach(item => {\n    \n    // 1. Zložíme link\n    const link = `${baseUrl}/${evidencia}/${item.id}/edit`;\n    \n    // 2. Vytvoríme objekt presne podľa požadovanej štruktúry\n    const novaKolekcia = {\n      Datetime: aktualnyDatetime,\n      firma: abra_firma,\n      evidencia: evidencia,\n      abralink: link,\n      popis: item.popis,\n      duzpUcto: item.duzpUcto, // <--- Pridané duzpUcto\n      kontrola: \"ZAHRANICNE FA PRIJATE\",\n      ID_spustenia: ID_spustenia,\n      ID_chybny_doklad: item.id\n    };\n    \n    // 3. Pridáme kolekciu do nášho hlavného poľa (iba ak je suma DPH 0)\n    if (parseFloat(item.sumDphCelkem) === 0) {\n      vystupneKolekcie.push(novaKolekcia);\n    };\n  });\n};\n\n// --- Spracovanie iba Faktúr prijatých ---\nspracujPole(FA_prijata, \"faktura-prijata\");\n\n// Vraciame pole objektov.\n// Make.com zoberie toto pole a pre každý objekt v ňom\n// spustí nasledujúci modul ako samostatný bundle.\nreturn vystupneKolekcie;\n\n// --- Koniec kódu ---"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 185,
+                    "y": -537,
+                    "name": "Čáry Máry"
+                },
+                "restore": {
+                    "expect": {
+                        "input": {
+                            "items": [
+                                null,
+                                null,
+                                null
+                            ]
+                        },
+                        "language": {
+                            "mode": "chose",
+                            "label": "JavaScript"
+                        },
+                        "inputFormat": {
+                            "label": "Code editor"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "language",
+                        "type": "select",
+                        "label": "Language",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "javascript",
+                                "python"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "input",
+                        "spec": {
+                            "name": "value",
+                            "spec": [
+                                {
+                                    "name": "name",
+                                    "type": "text",
+                                    "label": "Name",
+                                    "required": true,
+                                    "validate": {
+                                        "max": 32,
+                                        "min": 1,
+                                        "pattern": "^[a-zA-Z0-9_]{1,32}$"
+                                    }
+                                },
+                                {
+                                    "name": "value",
+                                    "type": "any",
+                                    "label": "Value"
+                                }
+                            ],
+                            "type": "collection",
+                            "label": "Variable"
+                        },
+                        "type": "array",
+                        "label": "Input"
+                    },
+                    {
+                        "name": "dependencies",
+                        "spec": {
+                            "name": "value",
+                            "type": "text",
+                            "label": "Dependency",
+                            "required": true,
+                            "validate": {
+                                "max": 214,
+                                "min": 1,
+                                "pattern": "^[A-Za-z0-9_@\\./<>\\=\\!~\\^+\\-]{1,214}$"
+                            }
+                        },
+                        "type": "array",
+                        "label": "Additional dependencies (Enterprise plans only)"
+                    },
+                    {
+                        "name": "inputFormat",
+                        "type": "select",
+                        "label": "Input format",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "editor",
+                                "string"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "codeEditorJavascript",
+                        "type": "editor",
+                        "label": "Code",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 10,
+            "module": "builtin:BasicRouter",
+            "version": 1,
+            "parameters": {
+                "else": 1
+            },
+            "mapper": null,
+            "metadata": {
+                "designer": {
+                    "x": 525,
+                    "y": -537
+                }
+            },
+            "routes": [
+                {
+                    "flow": [
+                        {
+                            "id": 7,
+                            "module": "google-sheets:addMultipleRows",
+                            "version": 2,
+                            "parameters": {
+                                "__IMTCONN__": 3340464
+                            },
+                            "filter": {
+                                "name": "NIE PRAZDNE",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{6.result}}",
+                                            "b": "0",
+                                            "o": "array:greater"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "mapper": {
+                                "rows": "{{6.result}}",
+                                "sheetId": "chybné doklady",
+                                "spreadsheetId": "12lsNGua6jGGk0QsuM5HQsO9rEketoD_vRMtFowTMi9Y",
+                                "tableFirstRow": "A1:Z1",
+                                "insertDataOption": "INSERT_ROWS",
+                                "valueInputOption": "USER_ENTERED",
+                                "insertUnformatted": false
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 825,
+                                    "y": -687
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "rows": {
+                                            "mode": "edit"
+                                        },
+                                        "sheetId": {
+                                            "mode": "edit"
+                                        },
+                                        "tableFirstRow": {
+                                            "label": "A-Z"
+                                        },
+                                        "insertDataOption": {
+                                            "mode": "chose",
+                                            "label": "Insert rows"
+                                        },
+                                        "valueInputOption": {
+                                            "mode": "chose",
+                                            "label": "User entered"
+                                        },
+                                        "insertUnformatted": {
+                                            "mode": "chose"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "google"
+                                            },
+                                            "label": "My Google connection (patrik@feroveucto.sk)"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:google",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "spreadsheetId",
+                                        "type": "text",
+                                        "label": "Spreadsheet ID",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "insertUnformatted",
+                                        "type": "boolean",
+                                        "label": "Unformatted",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "valueInputOption",
+                                        "type": "select",
+                                        "label": "Value input option"
+                                    },
+                                    {
+                                        "name": "insertDataOption",
+                                        "type": "select",
+                                        "label": "Insert data option"
+                                    },
+                                    {
+                                        "type": "hidden"
+                                    },
+                                    {
+                                        "mode": "edit",
+                                        "name": "sheetId",
+                                        "type": "select",
+                                        "label": "Sheet Name",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "tableFirstRow",
+                                        "type": "select",
+                                        "label": "Column range",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "A1:Z1",
+                                                "A1:BZ1",
+                                                "A1:CZ1",
+                                                "A1:DZ1",
+                                                "A1:MZ1",
+                                                "A1:ZZ1"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "mode": "edit",
+                                        "name": "rows",
+                                        "spec": {
+                                            "name": "value",
+                                            "spec": [
+                                                {
+                                                    "name": "values",
+                                                    "spec": {
+                                                        "type": "text",
+                                                        "label": "Column"
+                                                    },
+                                                    "type": "array",
+                                                    "label": "Values",
+                                                    "labels": {
+                                                        "add": "Add value"
+                                                    }
+                                                }
+                                            ],
+                                            "type": "collection",
+                                            "label": "Row"
+                                        },
+                                        "type": "array",
+                                        "label": "Rows"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 9,
+                            "module": "appsheet:editRecord",
+                            "version": 1,
+                            "parameters": {
+                                "__IMTCONN__": 4941183
+                            },
+                            "mapper": {
+                                "Record": [
+                                    {
+                                        "name": "ID_spustenie",
+                                        "value": "{{8.ID_spustenie}}"
+                                    },
+                                    {
+                                        "name": "uspech",
+                                        "value": "TRUE"
+                                    },
+                                    {
+                                        "name": "počet dokladov",
+                                        "value": "{{length(6.result)}}"
+                                    }
+                                ],
+                                "tableName": "spustenia"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1157,
+                                    "y": -689
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "Record": {
+                                            "mode": "chose",
+                                            "items": [
+                                                null,
+                                                null,
+                                                null
+                                            ]
+                                        },
+                                        "UserSettings": {
+                                            "mode": "chose"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "appsheet"
+                                            },
+                                            "label": "FEROVEucto appka klienti"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:appsheet",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "tableName",
+                                        "type": "text",
+                                        "label": "Table Name",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "Record",
+                                        "spec": {
+                                            "name": "value",
+                                            "spec": [
+                                                {
+                                                    "name": "name",
+                                                    "type": "text",
+                                                    "label": "Key"
+                                                },
+                                                {
+                                                    "name": "value",
+                                                    "type": "text",
+                                                    "label": "Value"
+                                                }
+                                            ],
+                                            "type": "collection"
+                                        },
+                                        "type": "array",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "RunAsUserEmail",
+                                        "type": "email",
+                                        "label": "Run as User Email"
+                                    },
+                                    {
+                                        "name": "UserSettings",
+                                        "spec": {
+                                            "name": "value",
+                                            "spec": [
+                                                {
+                                                    "name": "name",
+                                                    "type": "text",
+                                                    "label": "Setting Option Name"
+                                                },
+                                                {
+                                                    "name": "value",
+                                                    "type": "text",
+                                                    "label": "Setting Option Value"
+                                                }
+                                            ],
+                                            "type": "collection"
+                                        },
+                                        "type": "array",
+                                        "label": "User Settings"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "flow": [
+                        {
+                            "id": 11,
+                            "module": "appsheet:editRecord",
+                            "version": 1,
+                            "parameters": {
+                                "__IMTCONN__": 4941183
+                            },
+                            "filter": {
+                                "name": "PRAZDNE",
+                                "conditions": []
+                            },
+                            "mapper": {
+                                "Record": [
+                                    {
+                                        "name": "ID_spustenie",
+                                        "value": "{{8.ID_spustenie}}"
+                                    },
+                                    {
+                                        "name": "uspech",
+                                        "value": "{{true}}"
+                                    },
+                                    {
+                                        "name": "počet dokladov",
+                                        "value": "0"
+                                    }
+                                ],
+                                "tableName": "spustenia"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 846,
+                                    "y": -353
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "Record": {
+                                            "mode": "chose",
+                                            "items": [
+                                                null,
+                                                null,
+                                                null
+                                            ]
+                                        },
+                                        "UserSettings": {
+                                            "mode": "chose"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "appsheet"
+                                            },
+                                            "label": "FEROVEucto appka klienti"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:appsheet",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "tableName",
+                                        "type": "text",
+                                        "label": "Table Name",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "Record",
+                                        "spec": {
+                                            "name": "value",
+                                            "spec": [
+                                                {
+                                                    "name": "name",
+                                                    "type": "text",
+                                                    "label": "Key"
+                                                },
+                                                {
+                                                    "name": "value",
+                                                    "type": "text",
+                                                    "label": "Value"
+                                                }
+                                            ],
+                                            "type": "collection"
+                                        },
+                                        "type": "array",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "RunAsUserEmail",
+                                        "type": "email",
+                                        "label": "Run as User Email"
+                                    },
+                                    {
+                                        "name": "UserSettings",
+                                        "spec": {
+                                            "name": "value",
+                                            "spec": [
+                                                {
+                                                    "name": "name",
+                                                    "type": "text",
+                                                    "label": "Setting Option Name"
+                                                },
+                                                {
+                                                    "name": "value",
+                                                    "type": "text",
+                                                    "label": "Setting Option Value"
+                                                }
+                                            ],
+                                            "type": "collection"
+                                        },
+                                        "type": "array",
+                                        "label": "User Settings"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "instant": true,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu1.make.com",
+        "notes": []
+    }
+}
